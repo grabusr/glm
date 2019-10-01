@@ -42,25 +42,31 @@ source_group("SIMD Files" FILES ${SIMD_SOURCE})
 source_group("SIMD Files" FILES ${SIMD_INLINE})
 source_group("SIMD Files" FILES ${SIMD_HEADER})
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/..)
+set(SOURCES ${ROOT_SOURCE} ${CORE_SOURCE} ${EXT_SOURCE} ${GTC_SOURCE} ${GTX_SOURCE} ${SIMD_SOURCE})
 
-if(BUILD_STATIC_LIBS)
-add_library(glm_static STATIC ${ROOT_TEXT} ${ROOT_MD} ${ROOT_NAT}
-	${ROOT_SOURCE}    ${ROOT_INLINE}    ${ROOT_HEADER}
-	${CORE_SOURCE}    ${CORE_INLINE}    ${CORE_HEADER}
-	${EXT_SOURCE}     ${EXT_INLINE}     ${EXT_HEADER}
-	${GTC_SOURCE}     ${GTC_INLINE}     ${GTC_HEADER}
-	${GTX_SOURCE}     ${GTX_INLINE}     ${GTX_HEADER}
-	${SIMD_SOURCE}    ${SIMD_INLINE}    ${SIMD_HEADER})
-endif()
+if (BUILD_SHARED_LIBS)
+    add_library(glm SHARED ${SOURCES})
+else()
+    add_library(glm STATIC ${SOURCES})
+endif ()
 
-if(BUILD_SHARED_LIBS)
-add_library(glm_shared SHARED ${ROOT_TEXT} ${ROOT_MD} ${ROOT_NAT}
-	${ROOT_SOURCE}    ${ROOT_INLINE}    ${ROOT_HEADER}
-	${CORE_SOURCE}    ${CORE_INLINE}    ${CORE_HEADER}
-	${EXT_SOURCE}     ${EXT_INLINE}     ${EXT_HEADER}
-	${GTC_SOURCE}     ${GTC_INLINE}     ${GTC_HEADER}
-	${GTX_SOURCE}     ${GTX_INLINE}     ${GTX_HEADER}
-	${SIMD_SOURCE}    ${SIMD_INLINE}    ${SIMD_HEADER})
-endif()
+target_include_directories(glm PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/..>
+                                      $<INSTALL_INTERFACE:include/glm>)
+install(TARGETS glm
+        EXPORT glm-targets
+        ARCHIVE DESTINATION lib
+        LIBRARY DESTINATION lib
+        RUNTIME DESTINATION bin)
+
+install(FILES ${ROOT_HEADER} ${ROOT_INLINE} DESTINATION include/glm)
+install(FILES ${CORE_HEADER} ${CORE_INLINE} DESTINATION include/glm/detail)
+install(FILES ${EXT_HEADER} ${EXT_INLINE} DESTINATION include/glm/ext)
+install(FILES ${GTC_HEADER} ${GTC_INLINE} DESTINATION include/glm/gtc)
+install(FILES ${GTX_HEADER} ${GTX_INLINE} DESTINATION include/glm/gtx)
+install(FILES ${SIMD_HEADER} ${SIMD_INLINE} DESTINATION include/glm/simd)
+
+install(EXPORT glm-targets
+        NAMESPACE glm::
+        FILE glm-config.cmake
+        DESTINATION lib/cmake/glm)
 

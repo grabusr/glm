@@ -7,8 +7,7 @@ project(glm VERSION ${GLM_VERSION} LANGUAGES CXX)
 enable_testing()
 
 option(GLM_QUIET "No CMake Message" OFF)
-option(BUILD_SHARED_LIBS "Build shared library" ON)
-option(BUILD_STATIC_LIBS "Build static library" ON)
+option(BUILD_SHARED_LIBS "Build as shared library" OFF)
 option(GLM_TEST_ENABLE_CXX_98 "Enable C++ 98" OFF)
 option(GLM_TEST_ENABLE_CXX_11 "Enable C++ 11" OFF)
 option(GLM_TEST_ENABLE_CXX_14 "Enable C++ 14" OFF)
@@ -231,8 +230,6 @@ elseif(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
 	add_compile_options(/wd4309 /wd4324 /wd4389 /wd4127 /wd4267 /wd4146 /wd4201 /wd4464 /wd4514 /wd4701 /wd4820 /wd4365)
 	add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 endif()
-
-include_directories("${PROJECT_SOURCE_DIR}")
 
 add_subdirectory(glm)
 add_subdirectory(test)
