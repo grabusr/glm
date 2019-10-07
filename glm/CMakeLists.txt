@@ -44,7 +44,7 @@ source_group("SIMD Files" FILES ${SIMD_HEADER})
 
 set(SOURCES ${ROOT_SOURCE} ${CORE_SOURCE} ${EXT_SOURCE} ${GTC_SOURCE} ${GTX_SOURCE} ${SIMD_SOURCE})
 
-if (BUILD_SHARED_LIBS)
+if (GLM_BUILD_SHARED_LIBS)
     add_library(glm SHARED ${SOURCES})
 else()
     add_library(glm STATIC ${SOURCES})
