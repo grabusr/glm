@@ -5,7 +5,12 @@ function(glmCreateTestGTC NAME)
 	add_test(
 		NAME ${SAMPLE_NAME}
 		COMMAND $<TARGET_FILE:${SAMPLE_NAME}> )
-	target_link_libraries(${SAMPLE_NAME} PRIVATE glm)
+
+	if (NOT GLM_BUILD_STATIC_LIBS)
+		target_link_libraries(${SAMPLE_NAME} PRIVATE glm_shared)
+	else ()
+		target_link_libraries(${SAMPLE_NAME} PRIVATE glm_static)
+	endif ()
 endfunction()
 
 if(GLM_TEST_ENABLE)
