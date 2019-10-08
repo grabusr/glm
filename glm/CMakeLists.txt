@@ -45,18 +45,37 @@ source_group("SIMD Files" FILES ${SIMD_HEADER})
 set(SOURCES ${ROOT_SOURCE} ${CORE_SOURCE} ${EXT_SOURCE} ${GTC_SOURCE} ${GTX_SOURCE} ${SIMD_SOURCE})
 
 if (GLM_BUILD_SHARED_LIBS)
-    add_library(glm SHARED ${SOURCES})
-else()
-    add_library(glm STATIC ${SOURCES})
+    add_library(glm_shared SHARED ${SOURCES})
+
+    set_target_properties(glm_shared PROPERTIES
+                          ARCHIVE_OUTPUT_NAME "glm"
+                          DEBUG_POSTFIX d)
+
+    target_include_directories(glm_shared PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/..>
+                                                 $<INSTALL_INTERFACE:include/glm>)
+    install(TARGETS glm_shared
+            EXPORT glm-targets
+            ARCHIVE DESTINATION lib
+            LIBRARY DESTINATION lib
+            RUNTIME DESTINATION bin)
 endif ()
 
-target_include_directories(glm PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/..>
-                                      $<INSTALL_INTERFACE:include/glm>)
-install(TARGETS glm
-        EXPORT glm-targets
-        ARCHIVE DESTINATION lib
-        LIBRARY DESTINATION lib
-        RUNTIME DESTINATION bin)
+if (GLM_BUILD_STATIC_LIBS)
+    add_library(glm_static STATIC ${SOURCES})
+
+    set_target_properties(glm_static PROPERTIES
+                          RUNTIME_OUTPUT_NAME "glm"
+                          LIBRARY_OUTPUT_NAME "glm"
+                          DEBUG_POSTFIX d)
+
+    target_include_directories(glm_static PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/..>
+                                                 $<INSTALL_INTERFACE:include/glm>)
+    install(TARGETS glm_static
+            EXPORT glm-targets
+            ARCHIVE DESTINATION lib
+            LIBRARY DESTINATION lib
+            RUNTIME DESTINATION bin)
+endif ()
 
 install(FILES ${ROOT_HEADER} ${ROOT_INLINE} DESTINATION include/glm)
 install(FILES ${CORE_HEADER} ${CORE_INLINE} DESTINATION include/glm/detail)
@@ -69,4 +88,3 @@ install(EXPORT glm-targets
         NAMESPACE glm::
         FILE glm-config.cmake
         DESTINATION lib/cmake/glm)
-
